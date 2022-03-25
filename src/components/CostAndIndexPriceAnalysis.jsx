@@ -25,10 +25,12 @@ export class CostAndIndexPriceAnalysis extends Component {
       allSeries: [],
       allcostDriver:[],
       getIcisForecastSummaryTable2:[],
+      
       order: [],
       Predicted:[],
       dataset:[],
       unit:[]
+      
     };
 
     this.productService = new ProductService();

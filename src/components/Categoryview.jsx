@@ -3,9 +3,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import ProductService from "../services/ProductService";
 import ProcService from "../services/ProcService";
-import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
-import { MultiSelect } from "primereact/multiselect";
+
 export class CategoryView extends Component {
   constructor(props) {
     super(props);
@@ -24,9 +22,8 @@ export class CategoryView extends Component {
       .getCategoryTable({ material: 7001733 })
       .then((data) => {
       console.log("Data in excel===>",data.data)
-
         return this.setState({
-          categoryUITable: data.data,
+          categoryUITable: data.data
         });
       });
   }
@@ -62,7 +59,8 @@ export class CategoryView extends Component {
              <Column field="open_pr_quantity" header="PR Qty" />
              <Column field="onroute_quantity" header="On Route Qty" />
              <Column field="demand_period" header="Forcasted Period" />
-             <Column field="Action" header="Action" />
+             <Column field="Action" header="Action" 
+               />
           </DataTable>
         </div>
 

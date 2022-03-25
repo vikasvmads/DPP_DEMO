@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 
 export const MaterialForm = () => {
   const [countries, setCountries] = useState([
-    { name: "7001733", code: "7001733" },
+    { name: "03J", code: "03J" },
   ]);
   const [showMessage, setShowMessage] = useState(false);
   const [formData, setFormData] = useState({});
@@ -33,7 +33,7 @@ export const MaterialForm = () => {
       let errors = {};
 
       if (!data.country) {
-        errors.country = "Material is required.";
+        errors.country = "Buyer is required.";
       }
       return errors;
     },
@@ -118,7 +118,7 @@ export const MaterialForm = () => {
                   options={countries}
                   optionLabel="name"
                 />
-                <label htmlFor="country">Material Number</label>
+                <label htmlFor="country">Buyer Group</label>
                 {/* {this.state.submitted && !this.state.countries.name && (
                   <small className="p-error">
                     Material Number is required.
