@@ -33,15 +33,22 @@ export class DemandAndInventoryAnalysis extends Component {
 
   componentDidMount() {
     this.procService
-      .getInventoryInfo({ material: 7001733 })
-      .then((data) => this.setState({ inventoryInfo: data.data.Sheet2 }));
+      .getInventoryInfo({ material: 16048 })
+      .then((data) =>
+      {
+       this.setState({ inventoryInfo: data.data.Sheet2 }
+        )
+
+      });
 
     this.procService.getDemandUITable({ material: 7001733 }).then((data) => {
       return this.setState({ demandUITable: data.data.Sheet2 });
     });
 
     this.procService.getMaterialInfo({ material: 7001733 }).then((data) => {
-      return this.setState({ materialInfo: data.data.data });
+      console.log("data in getMaterialInfo===>",data)
+      data = data.data.data.filter((d)=> d.material === '7001733')
+      return this.setState({ materialInfo: data });
     });
 
     this.procService
@@ -140,6 +147,32 @@ export class DemandAndInventoryAnalysis extends Component {
       month + 5 > 11
         ? months[(month + 5) % 11] + "-" + year + 1
         : months[month + 5] + "-" + year;
+        
+        let month7 =
+      month + 6 > 11
+        ? months[(month + 6) % 11] + "-" + year + 1
+        : months[month + 6] + "-" + year;
+        let month8 =
+        month + 7 > 11
+          ? months[(month + 7) % 11] + "-" + year + 1
+          : months[month + 7] + "-" + year;
+          let month9 =
+        month + 8 > 11
+          ? months[(month + 8) % 11] + "-" + year + 1
+          : months[month + 8] + "-" + year;
+          let month10 =
+        month + 9 > 11
+          ? months[(month + 9) % 11] + "-" + year + 1
+          : months[month + 9] + "-" + year;
+          let month11 =
+          month + 10 > 11
+            ? months[(month + 10) % 11] + "-" + year + 1
+            : months[month + 10] + "-" + year;
+            let month12 =
+            month + 11 > 11
+              ? months[(month + 11) % 11] + "-" + year + 1
+              : months[month + 11] + "-" + year;
+
 
     const chart3 = {
       chart: {
@@ -233,19 +266,15 @@ export class DemandAndInventoryAnalysis extends Component {
               header="Material Number"
               style={{ width: "14%" }}
             />
-            <Column field="type" header="Type" style={{ width: "14%" }} />
+            <Column field="material_type" header="Type" style={{ width: "14%" }} />
             <Column
-              field="description"
+              field="material_description_1"
               header="Description"
               style={{ width: "30%" }}
             />
-            <Column field="group" header="Group" style={{ width: "14%" }} />
-            <Column field="class" header="Class" style={{ width: "14%" }} />
-            <Column
-              field="criticality"
-              header="Criticality"
-              style={{ width: "14%" }}
-            />
+            <Column field="base_unit_of_measure" header="UOM" style={{ width: "14%" }} />
+
+            <Column field="unspsc_material_group_desc" header="UNSPSC Description" style={{ width: "14%" }} />
           </DataTable>
         </div>
 
@@ -259,13 +288,16 @@ export class DemandAndInventoryAnalysis extends Component {
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
           >
             <Column field="plant" header="Plant" />
-            <Column field="safety_stock" header="Safety Stock" />
-            <Column field="opening_stock" header="Unrestricted Stock" />
-            <Column
-              field="warehouse_capacity"
-              header="Warehouse Capacity(Tons)"
-            />
-            <Column field="quantity" header="Delivery Month" />
+            <Column field="safety_stock" header="ROP" />
+            <Column field="avg_consumption" header="Avg Annual Consumption"/>
+            <Column field="UnristrictedStock" header="Available Stock"/>
+            <Column field="totalConsumption" header="Potential Consumption"/>
+            <Column field="open_pr_quantity" header="PR Quantity"/>
+            <Column field="onroute_quantity" header="On Route Qty"/>
+            <Column field="demand_period" header="Forecasted Period"/>
+            <Column field="demand_model" header="Model Category"/>
+            {/* <Column field="alert_category" header="Alert Category"/> */}
+            {/* <Column field="diff_open_safety_stock" header="diff_open_safety_stock"/> */}
           </DataTable>
         </div>
 
@@ -283,12 +315,18 @@ export class DemandAndInventoryAnalysis extends Component {
               field="avg_total_consumption"
               header="Avg Annual Consumption"
             />
-            <Column field="5/1/21" header={`${month1}`} />
-            <Column field="6/1/21" header={`${month2}`} />
-            <Column field="7/1/21" header={`${month3}`} />
-            <Column field="8/1/21" header={`${month4}`} />
-            <Column field="9/1/21" header={`${month5}`} />
-            <Column field="10/1/21" header={`${month6}`} />
+            <Column field="2022_01_01" header={`${month1}`} />
+            <Column field="2022_02_01" header={`${month2}`} />
+            <Column field="2022_03_01" header={`${month3}`} />
+            <Column field="2022_04_01" header={`${month4}`} />
+            <Column field="2022_05_01" header={`${month5}`} />
+            <Column field="2022_06_01" header={`${month6}`} />
+            <Column field="2022_07_01" header={`${month7}`} />
+            <Column field="2022_08_01" header={`${month8}`} />
+            <Column field="2022_09_01" header={`${month9}`} />
+            <Column field="2022_10_01" header={`${month10}`} />
+            <Column field="2022_11_01" header={`${month11}`} />
+            <Column field="2022_12_01" header={`${month12}`} />
             <Column field="prediction_error" header="Prediction Accuracy" />
           </DataTable>
         </div>

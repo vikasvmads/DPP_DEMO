@@ -3,7 +3,7 @@ import axios from "axios";
 export default class ProcService {
   getMaterialInfo(params) {
     return axios
-      .get("assets/demo/data/material_info.json", { params: params })
+      .get("/assets/demo/data/material_info.json", { params: params })
       .then((res) => {
         //console.log("getMaterialInfo ==>", res);
         return res;
@@ -25,9 +25,34 @@ export default class ProcService {
       );
   }
 
+  getIcisForecastSummaryTable2(params) {
+    return axios
+      .get("/assets/demo/data/icis_forecast_summary_table_2.json", {
+        params: params,
+      })
+      .then((res) => {
+        return res;
+      })
+      .catch((e) =>
+        console.log(`error in icis_forecast_summary_table_2 ${e.message}`)
+      );
+  }
+
   getDemandUITable(params) {
     return axios
-      .get("assets/demo/data/demand_ui_table.json", {
+      .get("/assets/demo/data/demand_ui_table.json", {
+        params: params,
+      })
+      .then((res) => {
+        //console.log("getDemandUITable ==>", res);
+        return res;
+      })
+      .catch((e) => console.log(`error in getDemandUITable ${e.message}`));
+  }
+
+  getCategoryTable(params) {
+    return axios
+      .get("/assets/demo/data/category.json", {
         params: params,
       })
       .then((res) => {
@@ -91,7 +116,7 @@ export default class ProcService {
 
   getInventoryInfo(params) {
     return axios
-      .get("assets/demo/data/inventory_info.json", { params: params })
+      .get("/assets/demo/data/inventory_info.json", { params: params })
       .then((res) => {
         //console.log("getInventoryInfo  ==>", res);
         return res;
