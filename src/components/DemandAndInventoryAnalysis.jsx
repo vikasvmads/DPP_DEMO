@@ -22,38 +22,61 @@ export class DemandAndInventoryAnalysis extends Component {
     this.procService = new ProcService();
 
     this.plants = [
-      { label: "1200", value: "1200" },
-      { label: "1500", value: "1500" },
-      { label: "1800", value: "1800" },
+      // { label: "1200", value: "1200" },
+      // { label: "1500", value: "1500" },
+      // { label: "1800", value: "1800" },
       { label: "2000", value: "2000" },
-      { label: "3300", value: "3300" },
-      { label: "4100", value: "4100" },
+      { label: "PC52", value: "PC52" },
+
+      // { label: "3300", value: "3300" },
+      // { label: "4100", value: "4100" },
     ];
   }
 
   componentDidMount() {
     this.procService
-      .getInventoryInfo({ material: 16048 })
+      .getInventoryInfo({ material: 6007049 })
       .then((data) =>
       {
+        data.data.Sheet2.forEach(function(r){
+          let rValues = Object.entries(r);
+          rValues.forEach(function(e){
+            // e[0] is the key and e[1] is the value
+            let n = Number(e[1]);
+            if (!isNaN(n)) {
+              r[e[0]] = n.toFixed(2);
+            }
+          })
+        })
        this.setState({ inventoryInfo: data.data.Sheet2 }
         )
 
       });
 
-    this.procService.getDemandUITable({ material: 7001733 }).then((data) => {
+    this.procService.getDemandUITable({ material: 6007049 }).then((data) => {
+        data.data.Sheet2.forEach(function(r){
+        let rValues = Object.entries(r);
+        rValues.forEach(function(e){
+          // e[0] is the key and e[1] is the value
+          let n = Number(e[1]);
+          if (!isNaN(n)) {
+            r[e[0]] = n.toFixed(2);
+          }
+        })
+      })
       return this.setState({ demandUITable: data.data.Sheet2 });
     });
 
-    this.procService.getMaterialInfo({ material: 7001733 }).then((data) => {
+    this.procService.getMaterialInfo({ material: 6007049 }).then((data) => {
       console.log("data in getMaterialInfo===>",data)
-      data = data.data.data.filter((d)=> d.material === '7001733')
+      data = data.data.data.filter((d)=> d.material === '6007049')
       return this.setState({ materialInfo: data });
     });
 
     this.procService
-      .getDemandInfoRegressionSummaryTable({ material: 7001733 })
+      .getDemandInfoRegressionSummaryTable({ material: 6007049 })
       .then((data) => {
+        console.log("demand chart data====>",data)
         return this.setState({
           demandInfoRegressionSummaryTable: data.data.data,
         });
@@ -315,18 +338,18 @@ export class DemandAndInventoryAnalysis extends Component {
               field="avg_total_consumption"
               header="Avg Annual Consumption"
             />
-            <Column field="2022_01_01" header={`${month1}`} />
-            <Column field="2022_02_01" header={`${month2}`} />
-            <Column field="2022_03_01" header={`${month3}`} />
-            <Column field="2022_04_01" header={`${month4}`} />
-            <Column field="2022_05_01" header={`${month5}`} />
-            <Column field="2022_06_01" header={`${month6}`} />
-            <Column field="2022_07_01" header={`${month7}`} />
-            <Column field="2022_08_01" header={`${month8}`} />
-            <Column field="2022_09_01" header={`${month9}`} />
-            <Column field="2022_10_01" header={`${month10}`} />
-            <Column field="2022_11_01" header={`${month11}`} />
-            <Column field="2022_12_01" header={`${month12}`} />
+            <Column field="2022_03_01" header={`${month1}`} />
+            <Column field="2022_04_01" header={`${month2}`} />
+            <Column field="2022_05_01" header={`${month3}`} />
+            <Column field="2022_06_01" header={`${month4}`} />
+            <Column field="2022_07_01" header={`${month5}`} />
+            <Column field="2022_08_01" header={`${month6}`} />
+            <Column field="2022_09_01" header={`${month7}`} />
+            <Column field="2022_10_01" header={`${month8}`} />
+            <Column field="2022_11_01" header={`${month9}`} />
+            <Column field="2022_12_01" header={`${month10}`} />
+            <Column field="2023_01_01" header={`${month11}`} />
+            <Column field="2023_02_01" header={`${month12}`} />
             <Column field="prediction_error" header="Prediction Accuracy" />
           </DataTable>
         </div>

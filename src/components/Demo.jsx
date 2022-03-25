@@ -38,16 +38,10 @@ export class Demo extends Component {
     this.state = {
       materialCostDriverOutput: [],
       materialInfo: [],
-      costDriver: this.props.location.state
-        ? this.props.location.state.costDriver
-        : null,
-      seriesName: this.props.location.state
-        ? this.props.location.state.seriesName
-        : [],
+      costDriver: this.props.location.state ? this.props.location.state.costDriver : null,
+      seriesName: this.props.location.state ? this.props.location.state.seriesName : [],
       plant: this.props.location.state ? this.props.location.state.plant : null,
-      products: this.props.location.state
-        ? this.props.location.state.products
-        : [],
+      products: this.props.location.state ? this.props.location.state.products : [],
       countries: [],
       product: this.emptyProduct,
       productDialog: false,
@@ -128,14 +122,12 @@ export class Demo extends Component {
   }
 
   componentDidMount() {
-    this.procService
-      .getMaterialCostDriverOutput({ material: 7001733 })
-      .then((data) =>
-        this.setState({ materialCostDriverOutput: data.data.Sheet3 })
-      );
+    this.procService.getMaterialCostDriverOutput({ material: 7001733 }).then((data) => this.setState({ materialCostDriverOutput: data.data.Sheet3 }));
 
     this.procService.getMaterialInfo({ material: 7001733 }).then((data) => {
-      return this.setState({ materialInfo: data.data.data });
+      console.log("data in optimization=====>", data);
+      data = data.data.data.filter((d) => d.material === "7001733");
+      return this.setState({ materialInfo: data });
     });
 
     // this.procService
@@ -181,9 +173,7 @@ export class Demo extends Component {
         filteredCountries = this.countries.filter((country) => {
           // console.log('MyCountry' , country);
           // console.log("ab", country.name);
-          return country.name
-            .toLowerCase()
-            .startsWith(event.query.toLowerCase());
+          return country.name.toLowerCase().startsWith(event.query.toLowerCase());
         });
       }
 
@@ -208,28 +198,14 @@ export class Demo extends Component {
         style={{ width: "100%" }}
         placeholder="Select a Status"
         itemTemplate={(option) => {
-          return (
-            <span
-              className={`product-badge status-${option.value.toLowerCase()}`}
-            >
-              {option.label}
-            </span>
-          );
+          return <span className={`product-badge status-${option.value.toLowerCase()}`}>{option.label}</span>;
         }}
       />
     );
   }
 
   inputTextEditor(productKey, props, field) {
-    return (
-      <InputText
-        type="text"
-        value={props.rowData[field]}
-        onChange={(e) =>
-          this.onEditorValueChange(productKey, props, e.target.value)
-        }
-      />
-    );
+    return <InputText type="text" value={props.rowData[field]} onChange={(e) => this.onEditorValueChange(productKey, props, e.target.value)} />;
   }
 
   nameEditor(productKey, props) {
@@ -248,35 +224,15 @@ export class Demo extends Component {
       //     this.onEditorValueChange(productKey, props, e.value)
       //   }
       // />
-      <InputText
-        type="text"
-        value={props.rowData["quantity"]}
-        onChange={(e) =>
-          this.onEditorValueChange(productKey, props, e.target.value)
-        }
-      />
+      <InputText type="text" value={props.rowData["quantity"]} onChange={(e) => this.onEditorValueChange(productKey, props, e.target.value)} />
     );
   }
 
   priceEditor(productKey, props) {
-    return (
-      <InputNumber
-        value={props.rowData["price"]}
-        onValueChange={(e) =>
-          this.onEditorValueChange(productKey, props, e.value)
-        }
-      />
-    );
+    return <InputNumber value={props.rowData["price"]} onValueChange={(e) => this.onEditorValueChange(productKey, props, e.value)} />;
   }
   leadTime = (productKey, props) => {
-    return (
-      <InputNumber
-        value={props.rowData["Percentage"]}
-        onValueChange={(e) =>
-          this.onEditorValueChange(productKey, props, e.value)
-        }
-      />
-    );
+    return <InputNumber value={props.rowData["Percentage"]} onValueChange={(e) => this.onEditorValueChange(productKey, props, e.value)} />;
   };
 
   onEditorSubmit(e) {
@@ -372,8 +328,7 @@ export class Demo extends Component {
 
   createId() {
     let id = "";
-    let chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (let i = 0; i < 5; i++) {
       id += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -397,9 +352,7 @@ export class Demo extends Component {
   }
 
   deleteProduct() {
-    let products = this.state.products.filter(
-      (val) => val.id !== this.state.product.id
-    );
+    let products = this.state.products.filter((val) => val.id !== this.state.product.id);
     this.setState({
       products,
       deleteProductDialog: false,
@@ -457,12 +410,7 @@ export class Demo extends Component {
   actionBodyTemplate(rowData) {
     return (
       <React.Fragment>
-        <Button
-          icon="pi pi-trash"
-          className="p-button-text p-button-secondary"
-          onClick={() => this.confirmDeleteProduct(rowData)}
-          style={{ width: "30px" }}
-        />
+        <Button icon="pi pi-trash" className="p-button-text p-button-secondary" onClick={() => this.confirmDeleteProduct(rowData)} style={{ width: "30px" }} />
       </React.Fragment>
     );
   }
@@ -484,50 +432,20 @@ export class Demo extends Component {
     // <Forcast />;
     const productDialogFooter = (
       <React.Fragment>
-        <Button
-          label="Cancel"
-          icon="pi pi-times"
-          className="p-button-text"
-          onClick={this.hideDialog}
-        />
-        <Button
-          label="Save"
-          icon="pi pi-check"
-          className="p-button-text"
-          onClick={this.saveProduct}
-        />
+        <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={this.hideDialog} />
+        <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={this.saveProduct} />
       </React.Fragment>
     );
     const deleteProductDialogFooter = (
       <React.Fragment>
-        <Button
-          label="No"
-          icon="pi pi-times"
-          className="p-button-text"
-          onClick={this.hideDeleteProductDialog}
-        />
-        <Button
-          label="Yes"
-          icon="pi pi-check"
-          className="p-button-text"
-          onClick={this.deleteProduct}
-        />
+        <Button label="No" icon="pi pi-times" className="p-button-text" onClick={this.hideDeleteProductDialog} />
+        <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteProduct} />
       </React.Fragment>
     );
     const deleteProductsDialogFooter = (
       <React.Fragment>
-        <Button
-          label="No"
-          icon="pi pi-times"
-          className="p-button-text"
-          onClick={this.hideDeleteProductsDialog}
-        />
-        <Button
-          label="Yes"
-          icon="pi pi-check"
-          className="p-button-text"
-          onClick={this.deleteSelectedProducts}
-        />
+        <Button label="No" icon="pi pi-times" className="p-button-text" onClick={this.hideDeleteProductsDialog} />
+        <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteSelectedProducts} />
       </React.Fragment>
     );
 
@@ -538,31 +456,19 @@ export class Demo extends Component {
         <Route path="/FinalResult" exact component={FinalResult} /> */}
 
         <div className="card">
-          <h4 style={{ fontWeight:"bolder", fontFamily:'revert' }}>Material Information</h4>
+          <h4 style={{ fontWeight: "bolder", fontFamily: "revert" }}>Material Information</h4>
           <DataTable value={this.state.materialInfo}>
-            <Column
-              field="material"
-              header="Material Number"
-              style={{ width: "14%" }}
-            />
-            <Column field="type" header="Type" style={{ width: "14%" }} />
-            <Column
-              field="description"
-              header="Description"
-              style={{ width: "30%" }}
-            />
-            <Column field="group" header="Group" style={{ width: "14%" }} />
-            <Column field="class" header="Class" style={{ width: "14%" }} />
-            <Column
-              field="criticality"
-              header="Criticality"
-              style={{ width: "14%" }}
-            />
+            <Column field="material" header="Material Number" style={{ width: "14%" }} />
+            <Column field="material_type" header="Type" style={{ width: "14%" }} />
+            <Column field="material_description_1" header="Description" style={{ width: "30%" }} />
+            <Column field="base_unit_of_measure" header="UOM" style={{ width: "14%" }} />
+
+            <Column field="unspsc_material_group_desc" header="UNSPSC Description" style={{ width: "14%" }} />
           </DataTable>
         </div>
 
         <div className="card">
-          <h4 style={{ fontWeight:"bolder", fontFamily:'revert' }}>Price Prediction Cost Driver Output</h4>
+          <h4 style={{ fontWeight: "bolder", fontFamily: "revert" }}>Price Prediction Cost Driver Output</h4>
           <DataTable
             value={this.state.materialCostDriverOutput}
             paginator
@@ -575,7 +481,7 @@ export class Demo extends Component {
             <Column field="concentration_percentage" header="Percentage" />
           </DataTable>
         </div>
-        <h5 style={{ fontWeight:"bolder", fontFamily:'revert' }}>Select Plant</h5>
+        <h5 style={{ fontWeight: "bolder", fontFamily: "revert" }}>Select Plant</h5>
         <Dropdown
           field="Dropdown"
           style={{ width: "100%", marginBottom: "15px" }}
@@ -605,37 +511,18 @@ export class Demo extends Component {
                 onRowEditInit={this.onRowEditInit}
                 onRowEditCancel={this.onRowEditCancel}
               >
-                <Column
-                  field="name"
-                  header="Supplier Name"
-                  editor={(props) => this.nameEditor("products", props)}
-                />
+                <Column field="name" header="Supplier Name" editor={(props) => this.nameEditor("products", props)} />
 
-                <Column
-                  field="quantity"
-                  header="Formula/Fixed Price"
-                  editor={(props) => this.quatityEditor("products", props)}
-                />
-                <Column
-                  field="price"
-                  header="Max Capacity"
-                  editor={(props) => this.priceEditor("products", props)}
-                />
-                <Column
-                  field="Percentage"
-                  header="Lead Time"
-                  editor={(props) => this.leadTime("products", props)}
-                />
+                <Column field="quantity" header="Formula/Fixed Price" editor={(props) => this.quatityEditor("products", props)} />
+                <Column field="price" header="Max Capacity" editor={(props) => this.priceEditor("products", props)} />
+                <Column field="Percentage" header="Lead Time" editor={(props) => this.leadTime("products", props)} />
                 <Column
                   rowEditor
                   style={{ width: "13%" }}
                   // headerStyle={{ width: "7rem" }}
                   // bodyStyle={{ textAlign: "center" }}
                 ></Column>
-                <Column
-                  body={this.actionBodyTemplate}
-                  style={{ width: "10%" }}
-                ></Column>
+                <Column body={this.actionBodyTemplate} style={{ width: "10%" }}></Column>
               </DataTable>
               <div style={{ float: "right", margin: "10px 30px" }}>
                 <Button
@@ -677,11 +564,7 @@ export class Demo extends Component {
               </div>
               <div className="card">
                 <DataTable value={seriesData}>
-                  <Column
-                    field="index"
-                    header="Sr. No."
-                    style={{ width: "20%" }}
-                  />
+                  <Column field="index" header="Sr. No." style={{ width: "20%" }} />
                   <Column field="series" header="Series Name" />
                 </DataTable>
               </div>
@@ -693,15 +576,7 @@ export class Demo extends Component {
 
         {/* ===================================================== */}
 
-        <Dialog
-          visible={this.state.productDialog}
-          style={{ width: "600px" }}
-          header="Product Details"
-          modal
-          className="p-fluid"
-          footer={productDialogFooter}
-          onHide={this.hideDialog}
-        >
+        <Dialog visible={this.state.productDialog} style={{ width: "600px" }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={this.hideDialog}>
           <div className="p-field">
             <label htmlFor="Material_Number">Supplier Name</label>
             <InputText
@@ -714,97 +589,47 @@ export class Demo extends Component {
                 "p-invalid": this.state.submitted && !this.state.product.name,
               })}
             />
-            {this.state.submitted && !this.state.product.name && (
-              <small className="p-error">Supplier Name is required.</small>
-            )}
+            {this.state.submitted && !this.state.product.name && <small className="p-error">Supplier Name is required.</small>}
           </div>
 
           {/* <div className="p-formgrid p-grid"> */}
           <div className="p-field">
             <label htmlFor="quantity">Formula/Fixed Price</label>
-            <InputText
-              id="quantity"
-              value={this.state.product.quantity}
-              onChange={(e) => this.onInputChange(e, "quantity")}
-              required
-            />
-            {this.state.submitted && !this.state.product.quantity && (
-              <small className="p-error">
-                Formula/Fixed Price is required.
-              </small>
-            )}
+            <InputText id="quantity" value={this.state.product.quantity} onChange={(e) => this.onInputChange(e, "quantity")} required />
+            {this.state.submitted && !this.state.product.quantity && <small className="p-error">Formula/Fixed Price is required.</small>}
           </div>
 
           <div className="p-field">
             <label htmlFor="price">Max Capacity</label>
-            <InputNumber
-              id="price"
-              value={this.state.product.price}
-              onValueChange={(e) => this.onInputNumberChange(e, "price")}
-              required
-            />
-            {this.state.submitted && !this.state.product.price && (
-              <small className="p-error">Max Capacity is required.</small>
-            )}
+            <InputNumber id="price" value={this.state.product.price} onValueChange={(e) => this.onInputNumberChange(e, "price")} required />
+            {this.state.submitted && !this.state.product.price && <small className="p-error">Max Capacity is required.</small>}
           </div>
 
           <div className="p-field">
             <label htmlFor="Percentage">Lead Time</label>
-            <InputNumber
-              id="Percentage"
-              value={this.state.product.Percentage}
-              onValueChange={(e) => this.onInputNumberChange(e, "Percentage")}
-              required
-            />
-            {this.state.submitted && !this.state.product.Percentage && (
-              <small className="p-error">Lead Time is required.</small>
-            )}
+            <InputNumber id="Percentage" value={this.state.product.Percentage} onValueChange={(e) => this.onInputNumberChange(e, "Percentage")} required />
+            {this.state.submitted && !this.state.product.Percentage && <small className="p-error">Lead Time is required.</small>}
           </div>
           {/* </div> */}
         </Dialog>
 
         {/* ======================================================= */}
 
-        <Dialog
-          visible={this.state.deleteProductDialog}
-          style={{ width: "450px" }}
-          header="Confirm"
-          modal
-          footer={deleteProductDialogFooter}
-          onHide={this.hideDeleteProductDialog}
-        >
+        <Dialog visible={this.state.deleteProductDialog} style={{ width: "450px" }} header="Confirm" modal footer={deleteProductDialogFooter} onHide={this.hideDeleteProductDialog}>
           <div className="confirmation-content">
-            <i
-              className="pi pi-exclamation-triangle p-mr-3"
-              style={{ fontSize: "2rem" }}
-            />
+            <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: "2rem" }} />
             {this.state.product && (
               <span>
-                Are you sure you want to delete <b>{this.state.product.name}</b>
-                ?
+                Are you sure you want to delete <b>{this.state.product.name}</b>?
               </span>
             )}
           </div>
         </Dialog>
 
-        <Dialog
-          visible={this.state.deleteProductsDialog}
-          style={{ width: "450px" }}
-          header="Confirm"
-          modal
-          footer={deleteProductsDialogFooter}
-          onHide={this.hideDeleteProductsDialog}
-        >
+        <Dialog visible={this.state.deleteProductsDialog} style={{ width: "450px" }} header="Confirm" modal footer={deleteProductsDialogFooter} onHide={this.hideDeleteProductsDialog}>
           <div className="confirmation-content">
-            <i
-              className="pi pi-exclamation-triangle p-mr-3"
-              style={{ fontSize: "2rem" }}
-            />
-            {this.state.product && (
-              <span>
-                Are you sure you want to delete the selected products?
-              </span>
-            )}
+            <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: "2rem" }} />
+            {this.state.product && <span>Are you sure you want to delete the selected products?</span>}
           </div>
         </Dialog>
       </div>

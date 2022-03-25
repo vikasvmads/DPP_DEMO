@@ -43,11 +43,16 @@ export class Optimization extends Component {
     this.procService
       .getMaterialCostDriverOutput({ material: 7001733 })
       .then((data) =>
-        this.setState({ materialCostDriverOutput: data.data.Sheet3 })
+       {
+         data = data.data.data.filter((d) => d.material === "7001733");
+         this.setState({ materialCostDriverOutput: data.data.Sheet3 })
+      }
       );
 
     this.procService.getMaterialInfo({ material: 7001733 }).then((data) => {
-      return this.setState({ materialInfo: data.data.data });
+      console.log("data in optimization=====>",data)
+      //data = data.data.data.filter((d) => d.material === "7001733");
+      return this.setState({ materialInfo: data });
     });
   }
 
@@ -87,48 +92,6 @@ export class Optimization extends Component {
 
   render() {
     console.log("props ===>", this.props);
-
-    // let months = [
-    //   "Jan",
-    //   "Feb",
-    //   "Mar",
-    //   "Apr",
-    //   "May",
-    //   "Jun",
-    //   "Jul",
-    //   "Aug",
-    //   "Sep",
-    //   "Oct",
-    //   "Nov",
-    //   "Dec",
-    // ];
-    // let date = new Date();
-    // let month = date.getMonth();
-    // let year = date.getFullYear();
-    // let month1 =
-    //   month > 11
-    //     ? months[month % 11] + "-" + year + 1
-    //     : months[month] + "-" + year;
-    // let month2 =
-    //   month + 1 > 11
-    //     ? months[(month + 1) % 11] + "-" + year + 1
-    //     : months[month + 1] + "-" + year;
-    // let month3 =
-    //   month + 2 > 11
-    //     ? months[(month + 2) % 11] + "-" + year + 1
-    //     : months[month + 2] + "-" + year;
-    // let month4 =
-    //   month + 3 > 11
-    //     ? months[(month + 3) % 11] + "-" + year + 1
-    //     : months[month + 3] + "-" + year;
-    // let month5 =
-    //   month + 4 > 11
-    //     ? months[(month + 4) % 11] + "-" + year + 1
-    //     : months[month + 4] + "-" + year;
-    // let month6 =
-    //   month + 5 > 11
-    //     ? months[(month + 5) % 11] + "-" + year + 1
-    //     : months[month + 5] + "-" + year;
     return (
       <div>
         <div className="card">

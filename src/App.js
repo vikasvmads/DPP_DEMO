@@ -54,7 +54,7 @@ const App = () => {
     },
     {
       label: "Category View",
-      icon: "pi pi-fw pi-user",
+      icon: "pi pi-fw pi-book",
       to: "/CategoryView",
     },
     {

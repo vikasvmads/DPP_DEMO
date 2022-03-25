@@ -13,7 +13,7 @@ export class CostAndIndexPriceAnalysis extends Component {
     super(props);
     this.state = {
       materialInfo: [],
-      AccuracyData:[],
+      AccuracyData: [],
       selectSerialName: null,
       icisAlertInfoData: [],
       seriesData: [],
@@ -23,40 +23,36 @@ export class CostAndIndexPriceAnalysis extends Component {
       costDriverSeries: [],
       icisForecastSummaryTable: [],
       allSeries: [],
-      allcostDriver:[],
-      getIcisForecastSummaryTable2:[],
+      allcostDriver: [],
+      getIcisForecastSummaryTable2: [],
       order: [],
-      Predicted:[]
+      Predicted: [],
+      dataset:[],
+      unit:[]
     };
 
     this.productService = new ProductService();
     this.procService = new ProcService();
-   // this.getWeekNumber = getWeekNumber();
+    // this.getWeekNumber = getWeekNumber();
 
     this.seriesName = [
-      {
-        name: "LLDPE Bulk Africa E Weekly",
-        code: "LLDPE Bulk Africa E Weekly",
-      },
       {
         name: "Glycerine Vegetable Spot FOB Midwest",
         code: "Glycerine Vegetable Spot FOB Midwest",
       },
-      {
-        name: "PE LLDPE Film Butene CFR Peru International 0 - 6 Weeks",
-        code: "PE LLDPE Film Butene CFR Peru International 0 - 6 Weeks",
-      },
-      {
-        name: "Flat Yarn Contract China Weekly",
-        code: "Flat Yarn Contract China Weekly",
-      },
+      // {
+      //   name: "LLDPE Butene C4 Bagged Hybrid Spot/Contract FOT Mexico Domestic 2-4- Weeks",
+      //   code: "LLDPE Butene C4 Bagged Hybrid Spot/Contract FOT Mexico Domestic 2-4- Weeks",
+      // },
+      
       {
         name: "Propylene Bulk NWE Monthly",
         code: "Propylene Bulk NWE Monthly",
       },
+
       {
-        name: "HDPE Blow Mould Posted EU Weekly",
-        code: "HDPE Blow Mould Posted EU Weekly",
+        name: "Titanium Dioxide Spot  FOB China 4-6 Weeks",
+        code: "Titanium Dioxide Spot  FOB China 4-6 Weeks",
       },
       {
         name: "LDPE High Grade Contract US Monthly",
@@ -132,32 +128,56 @@ export class CostAndIndexPriceAnalysis extends Component {
         code: "HDPE Film Domestic FD EU no-data",
       },
     ];
+    this.dataset = [
+      {
+        name: "ICIS",
+        code: "ICIS",
+      },
+      {
+        name: "IHS",
+        code: "IHS",
+      },
+    ];
+    this.unit = [
+      {
+        name: "cbm",
+        code: "CBM",
+      },
+      {
+        name: "mt",
+        code: "mt",
+      },
+    ];
   }
 
   componentDidMount() {
-    // this.procService.getOrder({ material: 7001733 }).then((res) => {
+    // this.procService.getOrder({ material: 6007049 }).then((res) => {
     //   return this.setState({
     //     order: res.data.order,
     //   });
     // });
 
-    this.procService.getMaterialInfo({ material: 7001733 }).then((data) => {
-      data = data.data.data.filter((d)=> d.material === '7001733')
-      console.log("data====>",data)
+    this.procService.getMaterialInfo({ material: 6007049 }).then((data) => {
+      data = data.data.data.filter((d) => d.material === "6007049");
+      console.log("data====>", data);
 
       return this.setState({ materialInfo: data });
     });
 
-    this.procService
-      .getIcisForecastSummaryTable({ material: 7001733 })
-      .then((data) => {
-
-         console.log("getIcisForecastSummaryTable  ===>", data.data.Sheet1);
-        return this.setState({ icisForecastSummaryTable: data.data.Sheet1 });
-      });
-
-
-      
+    this.procService.getIcisForecastSummaryTable({ material: 6007049 }).then((data) => {
+      console.log("getIcisForecastSummaryTable  ===>", data.data.Sheet1);
+      data.data.Sheet1.forEach(function(r){
+        let rValues = Object.entries(r);
+        rValues.forEach(function(e){
+          // e[0] is the key and e[1] is the value
+          let n = Number(e[1]);
+          if (!isNaN(n)) {
+            r[e[0]] = n.toFixed(2);
+          }
+        })
+      })
+      return this.setState({ icisForecastSummaryTable: data.data.Sheet1 });
+    });
 
     this.procService.getIcisAlertInfo({ frequency: "weekly" }).then((res) => {
       let first = res.data.Sheet1;
@@ -200,7 +220,7 @@ export class CostAndIndexPriceAnalysis extends Component {
 
     this.setState({ selectSerialName: e.value, seriesData: chartData1 });
   };
-   
+
   getWeekNumber = (thisDate) => {
     var dt = new Date(thisDate);
     var thisDay = dt.getDate();
@@ -211,13 +231,13 @@ export class CostAndIndexPriceAnalysis extends Component {
     var R = (thisDay + digit) % 7;
     if (R !== 0) return Math.floor(Q);
     else return Q;
-}
+  };
 
   oncostDriverSeriesChange = (e) => {
     const { icisForecastSummaryTable } = this.state;
-    console.log("icisForecastSummaryTable====>",icisForecastSummaryTable)
-    let seriesName = e.value.map((sr)=>sr.name)
-   // this.setState({allSeries:seriesName})
+    console.log("icisForecastSummaryTable====>", icisForecastSummaryTable);
+    let seriesName = e.value.map((sr) => sr.name);
+    // this.setState({allSeries:seriesName})
     let exampleData = e.value.map((sr) =>
       icisForecastSummaryTable
         .filter((el) => el.serial_name === sr.name)
@@ -247,62 +267,62 @@ export class CostAndIndexPriceAnalysis extends Component {
       costDriverSeriesData: chartData1,
     });
 
-    this.procService
-    .getIcisForecastSummaryTable2({ sizeunit: "mt",dataset: 'ICIS',material: "Base Oils (Americas)" })
-    .then((data) => {
-      let exampleData = seriesName.map((sn)=> data.data.Sheet1.filter((d)=> d.series === sn))
+    this.procService.getIcisForecastSummaryTable2({ sizeunit: "mt", dataset: "ICIS", material: "Base Oils (Americas)" }).then((data) => {
+      console.log("seriesName=====>",seriesName)
+      data.data.Sheet1.forEach(function(r){
+        let rValues = Object.entries(r);
+        rValues.forEach(function(e){
+          // e[0] is the key and e[1] is the value
+          let n = Number(e[1]);
+          if (!isNaN(n)) {
+            r[e[0]] = n.toFixed(2);
+          }
+        })
+      })
+      let exampleData = seriesName.map((sn) => data.data.Sheet1.filter((d) => d.series === sn));
+
       //For the weekly data
-      console.log("exampleData====>",exampleData[0])
-      exampleData = exampleData[0]
-      var allmonths = exampleData.map(m =>new Date( m.date).getMonth())
-      var allSeries = exampleData.map(m => m.serial_name)
+      console.log("exampleData====>", exampleData[0]);
+      exampleData = exampleData[0];
+      var allmonths = exampleData.map((m) => new Date(m.date).getMonth());
+      var allSeries = exampleData.map((m) => m.serial_name);
       var uniqueDates = [...new Set(allmonths)];
       var uniqueSeries = [...new Set(allSeries)];
       var finaldatarray = [];
-      console.log("uniqueDates==>",uniqueDates)
-      console.log("allSeries==>",uniqueSeries)
 
       var finalGridData = uniqueDates.map((m, index) => {
-          uniqueSeries.map(series => {
-              var filteredData = exampleData.filter(d => {
-                  var cDate = new Date(d.date)
-                  var cMonth = cDate.getMonth() + 1;
-                  if (m === cMonth && d.serial_name === series) {
-                    console.log("success")
-                      return d;
-                  }
-              })
-              console.log("filteredData===>",filteredData)
-              var finalData = filteredData.map(e => {
-                  var monthCount = index + 1;
-                  var data1 = {}
-                  var currentWeek = "Week " + this.getWeekNumber(e.date);
-                  data1["series_name"] = e.serial_name
-                  data1["currentWeek"] = currentWeek
-                  data1["month" + monthCount] = e.price
-                  finaldatarray.push(data1)
-              })
-          })
-      })
-      console.log("finaldatarray===>",finaldatarray)
-      var weeks = ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"]
-      var filterBySeriesNameData = seriesName
-          .map(sr => finaldatarray.filter(el => el.series_name == sr))
-      //console.log("filterBySeriesNameData   ======>", filterBySeriesNameData)
-      var res = filterBySeriesNameData.map(data => {
-          var weeklyFilter = weeks.map(week => data.filter(el => el.currentWeek == week))
-          //console.log("weeklyFilter ====>",weeklyFilter)
-          weeklyFilter = weeklyFilter.map(e => {
-              return Object.assign({}, ...e)
-          })
-          return weeklyFilter
-      })
+        uniqueSeries.map((series) => {
+          var filteredData = exampleData.filter((d) => {
+            var cDate = new Date(d.date);
+            var cMonth = cDate.getMonth() + 1;
+            if (m === cMonth && d.serial_name === series) {
+              return d;
+            }
+          });
+          var finalData = filteredData.map((e) => {
+            var monthCount = index + 1;
+            var data1 = {};
+            var currentWeek = "Week " + this.getWeekNumber(e.date);
+            data1["series_name"] = e.serial_name;
+            data1["currentWeek"] = currentWeek;
+            data1["month" + monthCount] = e.price;
+            finaldatarray.push(data1);
+          });
+        });
+      });
+      var weeks = ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"];
+      var filterBySeriesNameData = seriesName.map((sr) => finaldatarray.filter((el) => el.series_name == sr));
+      var res = filterBySeriesNameData.map((data) => {
+        var weeklyFilter = weeks.map((week) => data.filter((el) => el.currentWeek == week));
+        weeklyFilter = weeklyFilter.map((e) => {
+          return Object.assign({}, ...e);
+        });
+        return weeklyFilter;
+      });
 
-      var gridData = [].concat(...res)
-      this.setState({AccuracyData:exampleData})
-      this.setState({Predicted:gridData})
-
-      console.log("gridData====>",gridData)
+      var gridData = [].concat(...res);
+      this.setState({ AccuracyData: exampleData });
+      this.setState({ Predicted: gridData });
 
     });
   };
@@ -311,6 +331,16 @@ export class CostAndIndexPriceAnalysis extends Component {
     //console.log("onCostDriverChange event ====>", e);
     this.setState({ costDriver: e.value });
   };
+
+  onUnit = (e) => {
+    
+    this.setState({ unit: e.value });
+  };
+  onDataSet = (e) => {
+    
+    this.setState({dataset: e.value });
+  };
+
 
   render() {
     // const { order, icisAlertInfoData } = this.state;
@@ -383,13 +413,7 @@ export class CostAndIndexPriceAnalysis extends Component {
 
           //     this.point.mothlyPercentageReturn + '</b> '
 
-          return (
-            "Date of Date (Icis Alert info) : " +
-            new Date(this.x).toUTCString() +
-            " </br> Actual Values :  <b>" +
-            this.y +
-            "</b> </br>"
-          );
+          return "Date of Date (Icis Alert info) : " + new Date(this.x).toUTCString() + " </br> Actual Values :  <b>" + this.y + "</b> </br>";
           //  + chart + Percentile
         },
       },
@@ -469,15 +493,7 @@ export class CostAndIndexPriceAnalysis extends Component {
           //var Percentile = timeInterwal == "Weekly" ? ' </br> Percentile of Weekly Returns :  <b>' +
           //    this.point.weeklyPercentageReturn + '</b> ' : ' </br> Percentile of Monthly Returns :  <b>' +
           //    this.point.mothlyPercentageReturn + '</b> '
-          return (
-            "Series name :  <b>" +
-            this.series.name +
-            "</b> </br> Avg Price :  <b>" +
-            this.y +
-            "</b> </br> Day of Date : <b>" +
-            new Date(this.x).toUTCString() +
-            "</b>"
-          );
+          return "Series name :  <b>" + this.series.name + "</b> </br> Avg Price :  <b>" + this.y + "</b> </br> Day of Date : <b>" + new Date(this.x).toUTCString() + "</b>";
         },
       },
 
@@ -503,20 +519,12 @@ export class CostAndIndexPriceAnalysis extends Component {
 
     return (
       <div>
-       <div className="card">
-          <h4 style={{ fontWeight:"bolder", fontFamily:'revert' }}>Material Information</h4>
+        <div className="card">
+          <h4 style={{ fontWeight: "bolder", fontFamily: "revert" }}>Material Information</h4>
           <DataTable value={this.state.materialInfo}>
-            <Column
-              field="material"
-              header="Material Number"
-              style={{ width: "14%" }}
-            />
+            <Column field="material" header="Material Number" style={{ width: "14%" }} />
             <Column field="material_type" header="Type" style={{ width: "14%" }} />
-            <Column
-              field="material_description_1"
-              header="Description"
-              style={{ width: "30%" }}
-            />
+            <Column field="material_description_1" header="Description" style={{ width: "30%" }} />
             <Column field="base_unit_of_measure" header="UOM" style={{ width: "14%" }} />
 
             <Column field="unspsc_material_group_desc" header="UNSPSC Description" style={{ width: "14%" }} />
@@ -554,126 +562,103 @@ export class CostAndIndexPriceAnalysis extends Component {
               />
 
               <div style={{ width: "90%" }}>
-                <HighchartsReact
-                  highcharts={Highcharts}
-                  options={alertChartOptions}
-                />
+                <HighchartsReact highcharts={Highcharts} options={alertChartOptions} />
               </div>
             </div>
           )}
 
           {this.state.costdriverChart && (
-            <div className="card">
+            <>
+              <div className="card">
               <div style={{ display: "flex", margin: "5px 10px" }}>
                 <MultiSelect
                   style={{ width: "49%", margin: "5px 10px" }}
-                  value={this.state.costDriver}
-                  options={this.costDrivers}
-                  onChange={(e) => this.onCostDriverChange(e)}
+                  value={this.state.unit}
+                  options={this.unit}
+                  onChange={(e) => this.onUnit(e)}
                   optionLabel="name"
-                  placeholder="Select a Cost Driver"
+                  placeholder="Select Unit"
                   display="chip"
                 />
 
                 <MultiSelect
                   style={{ width: "49%", margin: "5px 10px" }}
-                  value={this.state.costDriverSeries}
-                  options={this.seriesName}
-                  onChange={(e) => this.oncostDriverSeriesChange(e)}
+                  value={this.state.dataset}
+                  options={this.dataset}
+                  onChange={(e) => this.onDataSet(e)}
                   optionLabel="name"
-                  placeholder="Select a Series"
+                  placeholder="Select Data set"
                   display="chip"
                 />
               </div>
+                <div style={{ display: "flex", margin: "5px 10px" }}>
+                  <MultiSelect
+                    style={{ width: "49%", margin: "5px 10px" }}
+                    value={this.state.costDriver}
+                    options={this.costDrivers}
+                    onChange={(e) => this.onCostDriverChange(e)}
+                    optionLabel="name"
+                    placeholder="Select a Cost Driver"
+                    display="chip"
+                  />
 
-              <div style={{ width: "100%" }}>
-                <HighchartsReact
-                  highcharts={Highcharts}
-                  options={costDriverAnalysisChart}
-                />
+                  <MultiSelect
+                    style={{ width: "49%", margin: "5px 10px" }}
+                    value={this.state.costDriverSeries}
+                    options={this.seriesName}
+                    onChange={(e) => this.oncostDriverSeriesChange(e)}
+                    optionLabel="name"
+                    placeholder="Select a Series"
+                    display="chip"
+                  />
+                </div>
+
+                <div style={{ width: "100%" }}>
+                  <HighchartsReact highcharts={Highcharts} options={costDriverAnalysisChart} />
+                </div>
               </div>
-            </div>
+
+              <div className="card">
+                <h4 style={{ fontWeight: "bolder", fontFamily: "revert" }}>Accuracy On Forcast Horizon-Monthly(percetage)</h4>
+                <DataTable value={this.state.AccuracyData}
+                  paginator
+                  rows={5}
+                  rowsPerPageOptions={[5, 10, 20]}
+                  paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+       
+                  >
+                  <Column field="material" header="Coast Driver" style={{ width: "14%" }} />
+                  {/* <Column field="type" header="Type" style={{ width: "14%" }} /> */}
+                  <Column field="serial_name" header="Series Name" style={{ width: "30%" }} />
+                  <Column field="first_month_accuracy" header="May22" style={{ width: "14%" }} />
+                  <Column field="second_month_accuracy" header="June22" style={{ width: "14%" }} />
+                  <Column field="third_month_accuracy" header="July22" style={{ width: "14%" }} />
+                  <Column field="fourth_month_accuracy" header="Aug22" style={{ width: "14%" }} />
+                  <Column field="fifth_month_accuracy" header="Aug22" style={{ width: "14%" }} />
+                  <Column field="sixth_month_accuracy" header="Aug22" style={{ width: "14%" }} />
+                </DataTable>
+              </div>
+              <div className="card">
+                <h4 style={{ fontWeight: "bolder", fontFamily: "revert" }}>Predicted Values On Forecast Horizon-Weekly</h4>
+                <DataTable
+                  value={this.state.Predicted}
+                  paginator
+                  rows={5}
+                  rowsPerPageOptions={[5, 10, 20]}
+                  paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                >
+                  <Column field="series_name" header="Series Name" />
+                  <Column field="currentWeek" header="Week" />
+                  <Column field="month3" header="March22" style={{ width: "14%" }} />
+                  <Column field="month4" header="April22" style={{ width: "14%" }} />
+                  <Column field="month5" header="May22" style={{ width: "14%" }} />
+                  <Column field="month6" header="June22" style={{ width: "14%" }} />
+                  <Column field="month7" header="July22" style={{ width: "14%" }} />
+                  <Column field="month8" header="Aug22" style={{ width: "14%" }} />
+                </DataTable>
+              </div>
+            </>
           )}
-        </div>
-        <div className="card">
-          <h4 style={{ fontWeight:"bolder", fontFamily:'revert' }}>Accuracy On Forcast Horizon-Monthly(percetage)</h4>
-          <DataTable value={this.state.AccuracyData}>
-            <Column
-              field="material"
-              header="Coast Driver"
-              style={{ width: "14%" }}
-            />
-            {/* <Column field="type" header="Type" style={{ width: "14%" }} /> */}
-            <Column
-              field="serial_name"
-              header="Series Name"
-              style={{ width: "30%" }}
-            />
-            <Column
-              field="first_month_accuracy"
-              header="May22"
-              style={{ width: "14%" }}
-            />
-             <Column
-              field="second_month_accuracy"
-              header="June22"
-              style={{ width: "14%" }}
-            />
-             <Column
-              field="third_month_accuracy"
-              header="July22"
-              style={{ width: "14%" }}
-            />
-             <Column
-              field="fourth_month_accuracy"
-              header="Aug22"
-              style={{ width: "14%" }}
-            />
-            <Column
-              field="fifth_month_accuracy"
-              header="Aug22"
-              style={{ width: "14%" }}
-            /><Column
-            field="sixth_month_accuracy"
-            header="Aug22"
-            style={{ width: "14%" }}
-          />
-          </DataTable>
-        </div>
-        <div className="card">
-          <h4 style={{ fontWeight:"bolder", fontFamily:'revert' }}>Predicted Values On Forecast Horizon-Weekly</h4>
-          <DataTable 
-            value={this.state.Predicted}
-            paginator
-            rows={5}
-            rowsPerPageOptions={[5, 10, 20]}
-            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-          >
-            <Column field="series_name" header="Series Name" />
-            <Column field="currentWeek" header="Week" />
-            <Column field="month3" header="March22" style={{ width: "14%" }} />
-            <Column field="month4" header="April22" style={{ width: "14%" }} />
-            <Column
-              field="month5"
-              header="May22"
-              style={{ width: "14%" }}
-            />
-             <Column
-              field="month6"
-              header="June22"
-              style={{ width: "14%" }}
-            />
-             <Column
-              field="month7"
-              header="July22"
-              style={{ width: "14%" }}
-            />
-             <Column
-              field="month8"
-              header="Aug22"
-              style={{ width: "14%" }}
-            />
-          </DataTable>
         </div>
       </div>
     );

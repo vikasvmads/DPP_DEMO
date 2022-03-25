@@ -6,6 +6,7 @@ import ProcService from "../services/ProcService";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { MultiSelect } from "primereact/multiselect";
+import { Link } from "react-router-dom";
 export class CategoryView extends Component {
   constructor(props) {
     super(props);
@@ -17,6 +18,8 @@ export class CategoryView extends Component {
     this.productService = new ProductService();
     this.procService = new ProcService();
   }
+
+  
 
   componentDidMount() {
 
@@ -30,7 +33,20 @@ export class CategoryView extends Component {
         });
       });
   }
+ 
+  statusBodyTemplate(rowData) {
 
+    return (
+
+      <Link to="/DemandAndInventoryAnalysis">
+
+        <span style={{ color: "#009FDA" }}>View More </span>
+
+      </Link>
+
+    );
+
+  }
 
   render() {
     // console.log("state Data  =>", this.state);
@@ -41,6 +57,8 @@ export class CategoryView extends Component {
   
 
         <div className="card">
+          <h4 style={{ fontWeight:"bolder", fontFamily:'revert' }}>Buyer Group-03J Overview Across Plants(Consolidated)</h4>
+
           {/* <h4 style={{ fontWeight:"bolder", fontFamily:'revert' }}>Inventory Analysis</h4> */}
           <DataTable 
             value={this.state.categoryUITable}
@@ -62,7 +80,7 @@ export class CategoryView extends Component {
              <Column field="open_pr_quantity" header="PR Qty" />
              <Column field="onroute_quantity" header="On Route Qty" />
              <Column field="demand_period" header="Forcasted Period" />
-             <Column field="Action" header="Action" />
+             <Column header="Action" body={this.statusBodyTemplate}></Column>
           </DataTable>
         </div>
 

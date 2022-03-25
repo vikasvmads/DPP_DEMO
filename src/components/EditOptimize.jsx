@@ -49,15 +49,15 @@ export class EditOptimize extends Component {
       .getCustomersMedium()
       .then((data) => this.setState({ customers: data }));
 
-    this.procService.getMaterialInfo({ material: 7001733 }).then((data) => {
+    this.procService.getMaterialInfo({ material: 6007049 }).then((data) => {
       return this.setState({ materialInfo: data.data.data });
     });
 
-    this.procService.getInventoryInfo({ material: 7001733 }).then((data) => {
+    this.procService.getInventoryInfo({ material: 6007049 }).then((data) => {
       return this.setState({ InventoryInfo: data.data.Sheet2 });
     });
 
-    this.procService.getDemandUITable({ material: 7001733 }).then((data) => {
+    this.procService.getDemandUITable({ material: 6007049 }).then((data) => {
       return this.setState({ demandUITable: data.data.Sheet2 });
     });
   }
