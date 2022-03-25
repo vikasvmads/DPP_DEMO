@@ -26,7 +26,9 @@ export class CostAndIndexPriceAnalysis extends Component {
       allcostDriver:[],
       getIcisForecastSummaryTable2:[],
       order: [],
-      Predicted:[]
+      Predicted:[],
+      dataset:[],
+      unit:[]
     };
 
     this.productService = new ProductService();
@@ -132,6 +134,32 @@ export class CostAndIndexPriceAnalysis extends Component {
         code: "HDPE Film Domestic FD EU no-data",
       },
     ];
+    this.dataset = [
+      {
+        name: "ICIS",
+        code: "ICIS",
+      },
+      {
+        name: "IHS",
+        code: "IHS",
+      },
+      
+     
+      
+    ];
+    this.unit = [
+      {
+        name: "cbm",
+        code: "CBM",
+      },
+      {
+        name: "mt",
+        code: "mt",
+      },
+      
+     
+      
+    ];
   }
 
   componentDidMount() {
@@ -141,15 +169,15 @@ export class CostAndIndexPriceAnalysis extends Component {
     //   });
     // });
 
-    this.procService.getMaterialInfo({ material: 7001733 }).then((data) => {
-      data = data.data.data.filter((d)=> d.material === '7001733')
+    this.procService.getMaterialInfo({ material: '03J' }).then((data) => {
+      data = data.data.data.filter((d)=> d.material === '03J')
       console.log("data====>",data)
 
       return this.setState({ materialInfo: data });
     });
 
     this.procService
-      .getIcisForecastSummaryTable({ material: 7001733 })
+      .getIcisForecastSummaryTable({ material: '03J' })
       .then((data) => {
 
          console.log("getIcisForecastSummaryTable  ===>", data.data.Sheet1);
@@ -310,6 +338,14 @@ export class CostAndIndexPriceAnalysis extends Component {
   onCostDriverChange = (e) => {
     //console.log("onCostDriverChange event ====>", e);
     this.setState({ costDriver: e.value });
+  };
+  onUnit = (e) => {
+    
+    this.setState({ unit: e.value });
+  };
+  onDataSet = (e) => {
+    
+    this.setState({dataset: e.value });
   };
 
   render() {
@@ -564,6 +600,29 @@ export class CostAndIndexPriceAnalysis extends Component {
 
           {this.state.costdriverChart && (
             <div className="card">
+              <div className="car">
+              <div style={{ display: "flex", margin: "5px 10px" }}>
+                <MultiSelect
+                  style={{ width: "49%", margin: "5px 10px" }}
+                  value={this.state.unit}
+                  options={this.unit}
+                  onChange={(e) => this.onUnit(e)}
+                  optionLabel="name"
+                  placeholder="Select Unit"
+                  display="chip"
+                />
+
+                <MultiSelect
+                  style={{ width: "49%", margin: "5px 10px" }}
+                  value={this.state.dataset}
+                  options={this.dataset}
+                  onChange={(e) => this.onDataSet(e)}
+                  optionLabel="name"
+                  placeholder="Select Data set"
+                  display="chip"
+                />
+              </div>
+              </div>
               <div style={{ display: "flex", margin: "5px 10px" }}>
                 <MultiSelect
                   style={{ width: "49%", margin: "5px 10px" }}
