@@ -6,12 +6,14 @@ import ProcService from "../services/ProcService";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { MultiSelect } from "primereact/multiselect";
+import { Link } from "react-router-dom";
+import { Button } from "primereact/button";
+
 export class CategoryView extends Component {
   constructor(props) {
     super(props);
     this.state = {
       categoryUITable: [],
-     
     };
 
     this.productService = new ProductService();
@@ -19,30 +21,31 @@ export class CategoryView extends Component {
   }
 
   componentDidMount() {
+    this.procService.getCategoryTable({ material: 7001733 }).then((data) => {
+      console.log("Data in excel===>", data.data);
 
-    this.procService
-      .getCategoryTable({ material: 7001733 })
-      .then((data) => {
-      console.log("Data in excel===>",data.data)
-
-        return this.setState({
-          categoryUITable: data.data,
-        });
+      return this.setState({
+        categoryUITable: data.data,
       });
+    });
   }
 
+  statusBodyTemplate(rowData) {
+    return (
+      <Link to="/DemandAndInventoryAnalysis">
+        <span style={{ color: "#009FDA" }}>View More </span>
+      </Link>
+    );
+  }
 
   render() {
     // console.log("state Data  =>", this.state);
-    
 
     return (
       <div>
-  
-
         <div className="card">
           {/* <h4 style={{ fontWeight:"bolder", fontFamily:'revert' }}>Inventory Analysis</h4> */}
-          <DataTable 
+          <DataTable
             value={this.state.categoryUITable}
             paginator
             rows={5}
@@ -58,11 +61,11 @@ export class CategoryView extends Component {
             />
             <Column field="conslidated_demand" header="Potential Consumption" />
             <Column field="material_type" header="Material Type" />
-             <Column field="base_unit_of_measure" header="UOM" />
-             <Column field="open_pr_quantity" header="PR Qty" />
-             <Column field="onroute_quantity" header="On Route Qty" />
-             <Column field="demand_period" header="Forcasted Period" />
-             <Column field="Action" header="Action" />
+            <Column field="base_unit_of_measure" header="UOM" />
+            <Column field="open_pr_quantity" header="PR Qty" />
+            <Column field="onroute_quantity" header="On Route Qty" />
+            <Column field="demand_period" header="Forcasted Period" />
+            <Column header="Action" body={this.statusBodyTemplate}></Column>
           </DataTable>
         </div>
 
