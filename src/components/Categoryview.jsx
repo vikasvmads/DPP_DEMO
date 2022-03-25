@@ -12,7 +12,6 @@ export class CategoryView extends Component {
     super(props);
     this.state = {
       categoryUITable: [],
-     
     };
 
     this.productService = new ProductService();
@@ -22,16 +21,13 @@ export class CategoryView extends Component {
   
 
   componentDidMount() {
+    this.procService.getCategoryTable({ material: 7001733 }).then((data) => {
+      console.log("Data in excel===>", data.data);
 
-    this.procService
-      .getCategoryTable({ material: 7001733 })
-      .then((data) => {
-      console.log("Data in excel===>",data.data)
-
-        return this.setState({
-          categoryUITable: data.data,
-        });
+      return this.setState({
+        categoryUITable: data.data,
       });
+    });
   }
  
   statusBodyTemplate(rowData) {
@@ -50,17 +46,14 @@ export class CategoryView extends Component {
 
   render() {
     // console.log("state Data  =>", this.state);
-    
 
     return (
       <div>
-  
-
         <div className="card">
           <h4 style={{ fontWeight:"bolder", fontFamily:'revert' }}>Buyer Group-03J Overview Across Plants(Consolidated)</h4>
 
           {/* <h4 style={{ fontWeight:"bolder", fontFamily:'revert' }}>Inventory Analysis</h4> */}
-          <DataTable 
+          <DataTable
             value={this.state.categoryUITable}
             paginator
             rows={5}
