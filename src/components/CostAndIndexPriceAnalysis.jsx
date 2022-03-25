@@ -26,7 +26,9 @@ export class CostAndIndexPriceAnalysis extends Component {
       allcostDriver:[],
       getIcisForecastSummaryTable2:[],
       order: [],
-      Predicted:[]
+      Predicted:[],
+      dataset:[],
+      unit:[]
     };
 
     this.productService = new ProductService();
@@ -131,6 +133,33 @@ export class CostAndIndexPriceAnalysis extends Component {
         name: "HDPE Film Domestic FD EU no-data",
         code: "HDPE Film Domestic FD EU no-data",
       },
+    ];
+    
+    this.dataset = [
+      {
+        name: "ICIS",
+        code: "ICIS",
+      },
+      {
+        name: "IHS",
+        code: "IHS",
+      },
+      
+     
+      
+    ];
+    this.unit = [
+      {
+        name: "cbm",
+        code: "CBM",
+      },
+      {
+        name: "mt",
+        code: "mt",
+      },
+      
+     
+      
     ];
   }
 
@@ -310,6 +339,14 @@ export class CostAndIndexPriceAnalysis extends Component {
   onCostDriverChange = (e) => {
     //console.log("onCostDriverChange event ====>", e);
     this.setState({ costDriver: e.value });
+  };
+  onUnit = (e) => {
+    
+    this.setState({ unit: e.value });
+  };
+  onDataSet = (e) => {
+    
+    this.setState({dataset: e.value });
   };
 
   render() {
@@ -564,6 +601,59 @@ export class CostAndIndexPriceAnalysis extends Component {
 
           {this.state.costdriverChart && (
             <div className="card">
+              <div className="card">
+                <div className="car">
+              <div style={{ display: "flex", margin: "5px 10px" }}>
+                <MultiSelect
+                  style={{ width: "49%", margin: "5px 10px" }}
+                  value={this.state.unit}
+                  options={this.unit}
+                  onChange={(e) => this.onUnit(e)}
+                  optionLabel="name"
+                  placeholder="Select Unit"
+                  display="chip"
+                />
+
+                <MultiSelect
+                  style={{ width: "49%", margin: "5px 10px" }}
+                  value={this.state.dataset}
+                  options={this.dataset}
+                  onChange={(e) => this.onDataSet(e)}
+                  optionLabel="name"
+                  placeholder="Select Data set"
+                  display="chip"
+                />
+              </div>
+              </div>
+              <div style={{ display: "flex", margin: "5px 10px" }}>
+                <MultiSelect
+                  style={{ width: "49%", margin: "5px 10px" }}
+                  value={this.state.costDriver}
+                  options={this.costDrivers}
+                  onChange={(e) => this.onCostDriverChange(e)}
+                  optionLabel="name"
+                  placeholder="Select a Cost Driver"
+                  display="chip"
+                />
+
+                <MultiSelect
+                  style={{ width: "49%", margin: "5px 10px" }}
+                  value={this.state.costDriverSeries}
+                  options={this.seriesName}
+                  onChange={(e) => this.oncostDriverSeriesChange(e)}
+                  optionLabel="name"
+                  placeholder="Select a Series"
+                  display="chip"
+                />
+              </div>
+
+              <div style={{ width: "100%" }}>
+                <HighchartsReact
+                  highcharts={Highcharts}
+                  options={costDriverAnalysisChart}
+                />
+              </div>
+            </div>
               <div style={{ display: "flex", margin: "5px 10px" }}>
                 <MultiSelect
                   style={{ width: "49%", margin: "5px 10px" }}
